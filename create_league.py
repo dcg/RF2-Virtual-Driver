@@ -3,8 +3,8 @@ import os
 import shutil
 from openpyxl.styles import Font, PatternFill
 
-#output_dir = r"C:\Program Files (x86)\Steam\steamapps\common\rFactor 2\UserData\player\Settings"
-output_dir = r"G:/dev/tmp/rf2"
+output_dir = r"C:\Program Files (x86)\Steam\steamapps\common\rFactor 2\UserData\player\Settings"
+#output_dir = r"G:/dev/tmp/rf2"
 
 template = """//[[gMa1.002f (c)2016 ]] [[ ]]
 GT3
@@ -66,6 +66,13 @@ def getBaseName(vehFile):
                 return stripped_value.replace(".dds","")
             
     
+def removeFilesAndFoldersInFolder(path):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            os.remove(os.path.join(root, file))
+        for dir in dirs:
+            shutil.rmtree(os.path.join(root, dir))
+
 def createRoster():
     workbook = openpyxl.load_workbook('data.xlsx', data_only=True)
     # Get the worksheet by name
@@ -97,6 +104,8 @@ def createRoster():
             new_folder_path = os.path.join(output_dir, last_folder)
             if not os.path.exists(new_folder_path):
                 os.makedirs(new_folder_path)
+            elif path not in counter:
+                removeFilesAndFoldersInFolder(new_folder_path)
             name_folder_path = os.path.join(new_folder_path, row['full_name'])
             if not os.path.exists(name_folder_path):
                 os.makedirs(name_folder_path)
